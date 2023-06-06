@@ -1,0 +1,43 @@
+.registration-form-container {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f5f5f5;
+    border-radius: 5px;
+  }
+  
+  .already-member-login {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+  }
+
+  /* Center the submit button */
+button[type="submit"] {
+    display: block;
+    margin: 0 auto;
+    margin-top: 10px;
+  }
+  
+  /* Add margin and padding to the form */
+  .registration-form-container form {
+    margin: 20px;
+    padding: 20px;
+  }
+  
+  /* Add rounded border around the form */
+  .registration-form-container form {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  
+  .already-member-login {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+    text-align: center;
+  }
+  

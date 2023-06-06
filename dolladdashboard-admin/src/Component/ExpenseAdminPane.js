@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Table, Modal, Button, Form } from 'react-bootstrap';
-import './savingStyle.css';
+import './savingStyle.css'
 import Header from './Header';
 
-const UserTable = () => {
+const ExpenseTable = () => {
   const [data, setData] = useState([]);
   const [param, setParam] = useState('');
   const [filteredData, setFilteredData] = useState([]);
@@ -12,31 +12,27 @@ const UserTable = () => {
 const [showModal, setShowModal] = useState(false);
 const [editedData, setEditedData] = useState([]);
 
-const getGoal = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      console.log("On saving")
-      const response = await axios.get(`http://localhost:8000/api/user/getAll`);
-      console.log(response.data)
-      setData(response.data);
-      setFilteredData(response.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+
   useEffect(() => {
-    
+    const getGoal = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        console.log("On saving")
+        const response = await axios.get(`http://localhost:8000/api/transaction/getAll`);
+        setData(response.data);
+        setFilteredData(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
     getGoal();
   }, []);
 
-  const handleDelete = async (item) => {
-    console.log(item)
-    const response = await axios.delete(`http://localhost:8000/api/user/delete/${item._id}`);
-    console.log(response)
-    getGoal();
-    setData(response.data);
-    const filtered = filteredData.filter((item) => item._id !== response.data._id);
+  const handleDelete = async (id) => {
+    const response = await axios.delete(`http://localhost:8000/api/transaction/admin/${id}`);
+    console.log(response);
+    const filtered = filteredData.filter((item) => item._id !== id);
     setFilteredData(filtered);
   };
 
@@ -50,9 +46,8 @@ const getGoal = async () => {
     event.preventDefault();
     try {
       const token = localStorage.getItem('token');
-      
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      await axios.put(`http://localhost:8000/api/user/edit/${editedData._id}`, editedData);
+      await axios.put(`http://localhost:8000/api/transaction/admin/${editedData._id}`, editedData);
       const index = data.findIndex((item) => item._id === editedData._id);
       const newData = [...data];
       newData[index] = editedData;
@@ -70,29 +65,29 @@ const getGoal = async () => {
       ...editedData,
       [event.target.name]: event.target.value
     });
+    console.log(editedData)
   };
 
   const handleSearch = (e) => {
     const keyword = e.target.value.toLowerCase();
     const filtered = data.filter(
       (item) =>
-        item.name.toLowerCase().includes(keyword) ||
-        item._id.toLowerCase().includes(keyword) ||
-        item.email.toLowerCase().includes(keyword) 
+        item.category.toLowerCase().includes(keyword) ||
+        item._id.toLowerCase().includes(keyword)
     );
     setParam(keyword);
     setFilteredData(filtered);
   };
 
   return (
-    <div>
-
+<div>
     <Header></Header>
+
     <div className="search-table">
       <Form.Group controlId="search">
         <Form.Control
           type="text"
-          placeholder="Search by Name, Email or User ID"
+          placeholder="Search by Category or ID"
           value={param}
           onChange={handleSearch}
         />
@@ -100,13 +95,11 @@ const getGoal = async () => {
       <Table striped bordered hover responsive>
         <thead>
           <tr>
-          <th>User ID</th>
-            <th>User Name</th>
-            <th>Email</th>
-            <th>Gender</th>
-            <th>Contact</th>
-            <th>Age</th>
-            <th>Is Admin</th>
+            <th>Expense Name</th>
+            <th>User ID</th>
+            <th>Expense ID</th>
+            <th>Amount</th>
+            <th>Date</th>
             <th>Created On</th>
             <th>Actions</th>
           </tr>
@@ -114,19 +107,17 @@ const getGoal = async () => {
         <tbody>
           {filteredData.map((item) => (
             <tr key={item._id}>
-            <td>{item._id}</td>
-              <td>{item.name}</td>
-              <td>{item.email}</td>
-              <td>{item.gender}</td>
-              <td>{item.contact}</td>
-              <td>{item.age}</td>
-              <td>{item.isAdmin.toString()}</td>
-              <td>{new Date(item.createdAt).toLocaleDateString()}</td>
+              <td>{item.category}</td>
+              <td>{item.user}</td>
+              <td>{item._id}</td>
+              <td>{item.amount}</td>
+              <td>{new Date(item.date).toLocaleDateString()}</td>
+              <td>{new Date(item.updatedAt).toLocaleDateString()}</td>
               <td>
                 <Button variant="primary" onClick={() => handleEdit(item)}>
                   Edit
                 </Button>{" "}
-                <Button variant="danger" onClick={() => handleDelete(item)}>
+                <Button variant="danger" onClick={() => handleDelete(item._id)}>
                   Delete
                 </Button>
               </td>
@@ -136,38 +127,47 @@ const getGoal = async () => {
       </Table>
       <Modal show={showModal} onHide={() => setShowModal(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>Edit User</Modal.Title>
+          <Modal.Title>Edit Goal</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form onSubmit={handleSubmit}>
             <Form.Group controlId="formGoalName">
-              <Form.Label>User Name</Form.Label>
+              <Form.Label>Expense Name</Form.Label>
               <Form.Control
                 type="text"
-                name="name"
-                value={editedData.name}
+                name="goalName"
+                value={editedData.category}
                 onChange={handleChange}
               />
             </Form.Group>
-            <Form.Group controlId="formGoalName">
-              <Form.Label>User Age</Form.Label>
+            <Form.Group controlId="formTarget">
+              <Form.Label>Amount</Form.Label>
               <Form.Control
-                type="text"
-                name="age"
-                value={editedData.age}
+                type="number"
+                name="amount"
+                value={editedData.amount}
                 onChange={handleChange}
               />
             </Form.Group>
-            <Form.Group controlId="formGoalName">
-              <Form.Label>User Contact</Form.Label>
+            {/* <Form.Group controlId="formProgress">
+              <Form.Label>Progress</Form.Label>
               <Form.Control
-                type="text"
-                name="contact"
-                value={editedData.contact}
+                type="number"
+                name="progress"
+                value={editedData.progress}
+                onChange={handleChange}
+              />
+            </Form.Group> */}
+            <Form.Group controlId="formDate">
+              <Form.Label>Date</Form.Label>
+              <Form.Control
+                type="date"
+                name="date"
+                value={editedData.date}
+                // value={new Date(editedData.date).toLocaleDateString()}
                 onChange={handleChange}
               />
             </Form.Group>
-            
             <Button variant="primary" type="submit">
               Save Changes
             </Button>
@@ -179,9 +179,10 @@ const getGoal = async () => {
   );
 };
 
-export default UserTable;
+export default ExpenseTable;
 
 
 
 
 
+{/* <input type="text" placeholder="Enter parameter" value={param} onChange={(e) => setParam(e.target.value)} /> */}

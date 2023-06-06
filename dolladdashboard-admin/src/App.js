@@ -6,26 +6,23 @@ import ContributionTable from './Component/contributionAdminPane';
 import Header from './Component/Header';
 import Footer from './Component/PageFooter';
 import UserTable from './Component/UserAdminPane';
+import LoginForm from './Component/Login/LoginComponent';
+import ExpenseTable from './Component/ExpenseAdminPane';
+import RegisterForm from './Component/Registration/RegisterComponent';
+
 
 function App() {
   return (
     
     <Router>
-      <Header></Header>
+      
     <Routes>
+    <Route path="/" element={<LoginForm></LoginForm>}></Route>
     <Route path="/saving" element={<SavingTable></SavingTable>}></Route>
     <Route path="/contribution" element={<ContributionTable></ContributionTable>}></Route>
     <Route path="/user" element={<UserTable></UserTable>}></Route>
-          {/* <Route path="/" element={<LoginForm></LoginForm>}></Route>
-          <Route exact path="/register" element={<RegisterForm></RegisterForm>} /> */}
-          {/* <Route exact path="/saving" element={<SaveGoalForm></SaveGoalForm>} />
-          <Route exact path="/saving/:id" element={<GoalDetails></GoalDetails>} />
-          <Route exact path="/stock" element={<StockCalculator></StockCalculator>} /> */}
-          {/* <Route exact path="/about-us" element={<AboutUsPage></AboutUsPage>} />
-          <Route exact path="/contact-us" element={<ContactUsPage></ContactUsPage>} />
-          <Route exact path="/job" element={<Job></Job>} /> */}
-          
-          {/* <Route path="/contact" component={ContactPage} /> */}
+    <Route path="/expenses" element={<ExpenseTable></ExpenseTable>}></Route>
+    <Route path="/register" element={<RegisterForm></RegisterForm>}></Route>
         
     </Routes>
     </Router>

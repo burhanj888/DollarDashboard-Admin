@@ -1,6 +1,7 @@
 import { useState, useRef} from 'react';
 import { Navbar, Nav, Modal, Button, Form } from 'react-bootstrap';
 import emailjs from '@emailjs/browser';
+import { useNavigate } from 'react-router-dom';
 import { Link } from "react-router-dom";
 // import {logo} from '../../public';
 import './Header.css';
@@ -11,6 +12,7 @@ function Header() {
 
   const handleShowModal = () => setShowModal(true);
   const handleCloseModal = () => setShowModal(false);
+  const navigate = useNavigate();
 
   const sendEmail = (e) => {
     e.preventDefault();
@@ -24,24 +26,29 @@ function Header() {
       });
   };
 
+  const handleLogout = () => {
+    localStorage.clear(); // Clear session data
+    navigate('/');
+  }
+
 
   return (
     <Navbar expand="md" className="header">
-      <Navbar.Brand href="/">
+      <Navbar.Brand href="/user">
         {/* <img src="dolladdashboard-admin/public/DollarDashboard-logo.png" alt="Logo" className="logo" /> */}
         <span className="company-name">Dollar Dashboard Admin Panel</span>
       </Navbar.Brand>
       <Navbar.Toggle aria-controls="navbar-nav" />
       <Navbar.Collapse id="navbar-nav">
         <Nav className="mr-auto">
-          <Nav.Link href="#" className="nav-link">Dashboard</Nav.Link>
-          <Nav.Link href="#" className="nav-link">Users</Nav.Link>
-          <Nav.Link href="#" className="nav-link">Saving</Nav.Link>
-          <Nav.Link href="#" className="nav-link">Expense</Nav.Link>
+          {/* <Nav.Link href="/dashboard" className="nav-link">Dashboard</Nav.Link> */}
+          <Nav.Link href="/user" className="nav-link">Users</Nav.Link>
+          <Nav.Link href="/saving" className="nav-link">Saving</Nav.Link>
+          <Nav.Link href="/expenses" className="nav-link">Expense</Nav.Link>
           <Nav.Link href="#" className="nav-link">Contributions</Nav.Link>
         </Nav>
-        <Button variant="primary" onClick={handleShowModal} className="contact-button">
-          Contact Us
+        <Button variant="primary" onClick={handleLogout} className="contact-button">
+          Log Out
         </Button>
       </Navbar.Collapse>
       <Modal show={showModal} onHide={handleCloseModal}>

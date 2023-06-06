@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Table, Modal, Button, Form } from 'react-bootstrap';
 import './savingStyle.css'
+import Header from './Header';
 
 const SavingTable = () => {
   const [data, setData] = useState([]);
@@ -18,7 +19,7 @@ const [editedData, setEditedData] = useState([]);
         const token = localStorage.getItem('token');
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         console.log("On saving")
-        const response = await axios.get(`http://localhost:8000/api/saving/`);
+        const response = await axios.get(`http://localhost:8000/api/saving/getAll`);
         setData(response.data);
         setFilteredData(response.data);
       } catch (error) {
@@ -29,7 +30,8 @@ const [editedData, setEditedData] = useState([]);
   }, []);
 
   const handleDelete = async (id) => {
-    await axios.delete(`http://localhost:8000/api/saving/${id}`);
+    const response = await axios.delete(`http://localhost:8000/api/saving/admin/${id}`);
+    console.log(response);
     const filtered = filteredData.filter((item) => item._id !== id);
     setFilteredData(filtered);
   };
@@ -45,7 +47,7 @@ const [editedData, setEditedData] = useState([]);
     try {
       const token = localStorage.getItem('token');
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      await axios.put(`http://localhost:8000/api/saving/${editedData._id}`, editedData);
+      await axios.put(`http://localhost:8000/api/saving/admin/${editedData._id}`, editedData);
       const index = data.findIndex((item) => item._id === editedData._id);
       const newData = [...data];
       newData[index] = editedData;
@@ -77,6 +79,9 @@ const [editedData, setEditedData] = useState([]);
   };
 
   return (
+    <div>
+        <Header></Header>
+    
     <div className="search-table">
       <Form.Group controlId="search">
         <Form.Control
@@ -169,6 +174,7 @@ const [editedData, setEditedData] = useState([]);
           </Form>
         </Modal.Body>
       </Modal>
+    </div>
     </div>
   );
 };
